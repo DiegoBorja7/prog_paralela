@@ -1,0 +1,20 @@
+[
+{
+  "directory": "D:/Tools/Clases26-26/prog_paralela/build",
+  "command": "D:\\Tools\\mingw64\\bin\\g++.exe -DFMT_SHARED -DCMAKE_INTDIR=\\\"Debug\\\" -isystem D:/Tools/vcpkg-2026.03.18/installed/x64-mingw-dynamic/include -g -std=gnu++17 -o CMakeFiles\\ejemplo02.dir\\Debug\\main.cpp.obj -c D:\\Tools\\Clases26-26\\prog_paralela\\main.cpp",
+  "file": "D:/Tools/Clases26-26/prog_paralela/main.cpp",
+  "output": "D:/Tools/Clases26-26/prog_paralela/build/CMakeFiles/ejemplo02.dir/Debug/main.cpp.obj"
+},
+{
+  "directory": "D:/Tools/Clases26-26/prog_paralela/build",
+  "command": "D:\\Tools\\mingw64\\bin\\g++.exe -DFMT_SHARED -DCMAKE_INTDIR=\\\"Release\\\" -isystem D:/Tools/vcpkg-2026.03.18/installed/x64-mingw-dynamic/include -O3 -DNDEBUG -std=gnu++17 -o CMakeFiles\\ejemplo02.dir\\Release\\main.cpp.obj -c D:\\Tools\\Clases26-26\\prog_paralela\\main.cpp",
+  "file": "D:/Tools/Clases26-26/prog_paralela/main.cpp",
+  "output": "D:/Tools/Clases26-26/prog_paralela/build/CMakeFiles/ejemplo02.dir/Release/main.cpp.obj"
+},
+{
+  "directory": "D:/Tools/Clases26-26/prog_paralela/build",
+  "command": "D:\\Tools\\mingw64\\bin\\g++.exe -DFMT_SHARED -DCMAKE_INTDIR=\\\"RelWithDebInfo\\\" -isystem D:/Tools/vcpkg-2026.03.18/installed/x64-mingw-dynamic/include -O2 -g -DNDEBUG -std=gnu++17 -o CMakeFiles\\ejemplo02.dir\\RelWithDebInfo\\main.cpp.obj -c D:\\Tools\\Clases26-26\\prog_paralela\\main.cpp",
+  "file": "D:/Tools/Clases26-26/prog_paralela/main.cpp",
+  "output": "D:/Tools/Clases26-26/prog_paralela/build/CMakeFiles/ejemplo02.dir/RelWithDebInfo/main.cpp.obj"
+}
+]

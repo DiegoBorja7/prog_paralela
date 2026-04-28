@@ -1,0 +1,27 @@
+{
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "terminal.integrated.automationProfile.windows": {
+    "path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+  },
+
+  "cmake.generator": "Ninja Multi-Config",
+  "cmake.buildDirectory": "${workspaceFolder}/build",
+  "cmake.debugConfig": {
+    "MIMode": "gdb",
+    "miDebuggerPath": "D:/Tools/mingw64/bin/gdb.exe",
+    "cwd": "${workspaceFolder}/build/Debug",
+    "environment": [
+      {
+        "name": "PATH",
+        "value": "D:/Tools/mingw64/bin;${workspaceFolder}/build/Debug;${workspaceFolder}/build/Release;${env:PATH}"
+      }
+    ]
+  },
+  "cmake.configureSettings": {
+    "CMAKE_C_COMPILER": "D:/Tools/mingw64/bin/gcc.exe",
+    "CMAKE_CXX_COMPILER": "D:/Tools/mingw64/bin/g++.exe",
+    "CMAKE_MAKE_PROGRAM": "D:/Tools/mingw64/bin/ninja.exe",
+    "CMAKE_TOOLCHAIN_FILE": "D:/Tools/vcpkg-2026.03.18/scripts/buildsystems/vcpkg.cmake",
+    "VCPKG_TARGET_TRIPLET": "x64-mingw-dynamic"
+  }
+}

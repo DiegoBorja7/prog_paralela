@@ -1,0 +1,31 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug ejemplo02 (MinGW)",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/Debug/ejemplo02.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/build/Debug",
+      "environment": [
+        {
+          "name": "PATH",
+          "value": "D:/Tools/mingw64/bin;D:/Tools/vcpkg-2026.03.18/installed/x64-mingw-dynamic/debug/bin;D:/Tools/vcpkg-2026.03.18/installed/x64-mingw-dynamic/bin;${workspaceFolder}/build/Debug;${workspaceFolder}/build/Release;${env:PATH}"
+        }
+      ],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "miDebuggerPath": "D:/Tools/mingw64/bin/gdb.exe",
+      "setupCommands": [
+        {
+          "description": "Enable pretty printing",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "Compilar"
+    }
+  ]
+}
