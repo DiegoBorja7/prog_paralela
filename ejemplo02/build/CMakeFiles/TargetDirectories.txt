@@ -1,3 +1,0 @@
-D:/Tools/Clases26-26/prog_paralela/build/CMakeFiles/ejemplo02.dir
-D:/Tools/Clases26-26/prog_paralela/build/CMakeFiles/edit_cache.dir
-D:/Tools/Clases26-26/prog_paralela/build/CMakeFiles/rebuild_cache.dir
