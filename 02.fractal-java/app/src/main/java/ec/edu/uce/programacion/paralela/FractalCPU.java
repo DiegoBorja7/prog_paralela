@@ -49,4 +49,40 @@ public class FractalCPU {
         }
 
     }
+
+    void julia_parallel_2(double x_min, double y_min, double x_max, double y_max, int width, int height,
+            int numThreads) {
+        double dx = (x_max - x_min) / width;
+        double dy = (y_max - y_min) / height;
+        int safeThreads = Math.max(1, numThreads);
+        int rowsPerThread = height / safeThreads;
+
+        Thread[] threads = new Thread[safeThreads];
+        for (int t = 0; t < safeThreads; t++) {
+            int startRow = t * rowsPerThread;
+            int endRow = (t == safeThreads - 1) ? height : startRow + rowsPerThread;
+
+            threads[t] = new Thread(() -> {
+                for (int j = startRow; j < endRow; j++) {
+                    double y = y_min + j * dy;
+                    int rowOffset = j * width;
+                    for (int i = 0; i < width; i++) {
+                        double x = x_min + i * dx;
+                        int color = acotado_2(x, y);
+                        pixel_buffer[rowOffset + i] = color;
+                    }
+                }
+            }, "fractal-cpu-" + t);
+            threads[t].start();
+        }
+
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException("Calculo paralelo interrumpido", e);
+            }
+        }
+    }
 }

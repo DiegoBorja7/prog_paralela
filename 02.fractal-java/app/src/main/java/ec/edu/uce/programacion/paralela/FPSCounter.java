@@ -11,7 +11,7 @@ public class FPSCounter {
         lastTime = System.currentTimeMillis();
     }
 
-    public int update() {
+    public boolean update() {
         frames++;
         long now = System.currentTimeMillis();
 
@@ -19,8 +19,13 @@ public class FPSCounter {
             fps = frames;
             frames = 0;
             lastTime = now;
+            return true;
         }
 
+        return false;
+    }
+
+    public int getFps() {
         return fps;
     }
 }

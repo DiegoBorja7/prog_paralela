@@ -4,8 +4,6 @@ import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 
-import java.nio.*;
-
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -19,25 +17,30 @@ public class FractalMain {
     // The window handle
     private long window;
     private int textureId;
-
-    private IntBuffer pixelBuffer;
+    private final int cpuCores;
 
     FractalCPU fractalCPU;
     FractalSimd fractalSimd;
     FPSCounter fpsCounter;
 
     int modo = 1; // 1: CPU, 2: SIMD
+    private int lastLoggedMode = -1;
+    private int lastLoggedIterations = -1;
+    private boolean forceLog = true;
 
     public FractalMain() {
+        cpuCores = Runtime.getRuntime().availableProcessors();
         fractalCPU = new FractalCPU();
         fractalSimd = new FractalSimd();
         fpsCounter = new FPSCounter();
-        pixelBuffer = BufferUtils.createIntBuffer(FractalParams.WIDTH * FractalParams.HEIGHT);
     }
 
     public void run() {
         verifyDllLoad();
         System.out.println("Hello LWJGL " + Version.getVersion() + "!");
+        System.out.println("Cores detectados: " + cpuCores);
+        System.out.println("Iteraciones actuales: " + FractalParams.MAX_ITERACIONES);
+        System.out.println("Modo actual: CPU (Threads)\n");
 
         init();
         loop();
@@ -63,7 +66,8 @@ public class FractalMain {
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 
         // Create the window
-        window = glfwCreateWindow(FractalParams.WIDTH, FractalParams.HEIGHT, "Hello World!", NULL, NULL);
+        String windowTitle = "Fractal Julia | Cores: " + cpuCores + " | 1=CPU, 2=SIMD";
+        window = glfwCreateWindow(FractalParams.WIDTH, FractalParams.HEIGHT, windowTitle, NULL, NULL);
         if (window == NULL)
             throw new RuntimeException("Failed to create the GLFW window");
 
@@ -74,22 +78,26 @@ public class FractalMain {
                 glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
             if (key == GLFW_KEY_UP && action == GLFW_RELEASE) {
                 FractalParams.MAX_ITERACIONES += 10;
+                forceLog = true;
             }
 
             if (key == GLFW_KEY_DOWN && action == GLFW_RELEASE) {
                 FractalParams.MAX_ITERACIONES -= 10;
                 if (FractalParams.MAX_ITERACIONES < 0)
                     FractalParams.MAX_ITERACIONES = 10;
+                forceLog = true;
             }
 
             if (key == GLFW_KEY_1 && action == GLFW_RELEASE) {
-                System.out.println("Modo CPU");
+                System.out.println("Modo CPU (Threads: " + cpuCores + ")");
                 modo = 1;
+                forceLog = true;
             }
 
             if (key == GLFW_KEY_2 && action == GLFW_RELEASE) {
-                System.out.println("Modo SIMD");
+                System.out.println("Modo SIMD (DLL)");
                 modo = 2;
+                forceLog = true;
             }
         });
 
@@ -123,7 +131,7 @@ public class FractalMain {
         glLoadIdentity();
 
         // Enable v-sync
-        glfwSwapInterval(1);
+        glfwSwapInterval(1); // comentar sí se quiere probar sin v-sync (más FPS pero tearing)
 
         // Make the window visible
         glfwShowWindow(window);
@@ -184,28 +192,39 @@ public class FractalMain {
     }
 
     private void paint() {
-        System.out.println("FPS: " + fpsCounter.update());
-
-        pixelBuffer.clear();
+        boolean tick = fpsCounter.update();
+        if (tick || forceLog || lastLoggedMode != modo || lastLoggedIterations != FractalParams.MAX_ITERACIONES) {
+            lastLoggedMode = modo;
+            lastLoggedIterations = FractalParams.MAX_ITERACIONES;
+            forceLog = false;
+            System.out.println("Estado | FPS: " + fpsCounter.getFps() +
+                    " | Modo: " + getModeLabel() +
+                    " | Iteraciones: " + FractalParams.MAX_ITERACIONES +
+                    " | Cores: " + cpuCores);
+        }
 
         if (modo == 1) {
-            fractalCPU.julia_serial_2(FractalParams.x_min, FractalParams.y_min, 
+            fractalCPU.julia_parallel_2(FractalParams.x_min, FractalParams.y_min,
                     FractalParams.x_max, FractalParams.y_max,
-                    FractalParams.WIDTH, FractalParams.HEIGHT);
-            pixelBuffer.put(FractalCPU.pixel_buffer);
+                    FractalParams.WIDTH, FractalParams.HEIGHT, cpuCores);
         } else if (modo == 2) {
             fractalSimd.juliaSimd();
-            pixelBuffer.put(fractalSimd.pixel_buffer.asIntBuffer());
         }
-        pixelBuffer.flip();
-        
+
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, textureId);
 
-        glTexImage2D(
-                GL_TEXTURE_2D, 0, GL_RGBA,
-                FractalParams.WIDTH, FractalParams.HEIGHT, 0,
-                GL_RGBA, GL_UNSIGNED_BYTE, FractalCPU.pixel_buffer);
+        if (modo == 2) {
+            glTexSubImage2D(
+                    GL_TEXTURE_2D, 0, 0, 0,
+                    FractalParams.WIDTH, FractalParams.HEIGHT,
+                    GL_RGBA, GL_UNSIGNED_BYTE, fractalSimd.pixel_buffer);
+        } else {
+            glTexSubImage2D(
+                    GL_TEXTURE_2D, 0, 0, 0,
+                    FractalParams.WIDTH, FractalParams.HEIGHT,
+                    GL_RGBA, GL_UNSIGNED_BYTE, FractalCPU.pixel_buffer);
+        }
 
         glBegin(GL_QUADS);
         {
@@ -224,9 +243,14 @@ public class FractalMain {
         glEnd();
     }
 
-    public native void julia_simd(double x_min, double y_min, double x_max, double y_max, int width, int height, int max_iteraciones, byte[] pixelBuffer);
+    public native void julia_simd(double x_min, double y_min, double x_max, double y_max, int width, int height,
+            int max_iteraciones, byte[] pixelBuffer);
 
     public static void main(String[] args) {
         new FractalMain().run();
+    }
+
+    private String getModeLabel() {
+        return (modo == 2) ? "SIMD" : "CPU";
     }
 }
