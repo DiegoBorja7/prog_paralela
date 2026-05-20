@@ -35,16 +35,35 @@
 #C3B868
 #E0CF52
 #FEE838
+
+---------------------
+
+#4477AA
+#5299C5
+#5FBBE0
+#58BEC9
+#3DA37E
+#228833
+#669C3A
+#AAB141
+#D3AA4E
+#E08863
+#EE6677
+#D35277
+#B83D77
+#AD4E85
+#B485A0
+#BBBBBB
  */
 
 #include "palette.h"
 
 uint32_t bswap32(uint32_t x)
 {
-    return (x & 0x000000FF << 24) |
-           (x & 0x0000FF00 << 8) |
-           (x & 0x00FF0000 >> 8) |
-           (x & 0xFF000000 >> 24);
+    return ((x & 0x000000FFu) << 24) |
+           ((x & 0x0000FF00u) << 8) |
+           ((x & 0x00FF0000u) >> 8) |
+           ((x & 0xFF000000u) >> 24);
 }
 
 std::vector<uint32_t> color_ramp = {
@@ -81,6 +100,22 @@ std::vector<uint32_t> color_ramp2 = {
     bswap32(0xB3AC6AFF),
     bswap32(0xC3B868FF),
     bswap32(0xE0CF52FF),
-    bswap32(0xFEE838FF)
-};
+    bswap32(0xFEE838FF)};
 
+std::vector<uint32_t> color_ramp3 = {
+    bswap32(0x4477AAFF),
+    bswap32(0x5299C5FF),
+    bswap32(0x5FBBE0FF),
+    bswap32(0x58BEC9FF),
+    bswap32(0x3DA37EFF),
+    bswap32(0x228833FF),
+    bswap32(0x669C3AFF),
+    bswap32(0xAAB141FF),
+    bswap32(0xD3AA4EFF),
+    bswap32(0xE08863FF),
+    bswap32(0xEE6677FF),
+    bswap32(0xD35277FF),
+    bswap32(0xB83D77FF),
+    bswap32(0xAD4E85FF),
+    bswap32(0xB485A0FF),
+    bswap32(0xBBBBBBFF)};

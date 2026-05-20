@@ -4,7 +4,7 @@ project(FractalJulia)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
 
 find_package(fmt CONFIG REQUIRED)
 find_package(SFML COMPONENTS System Graphics Window CONFIG REQUIRED)
@@ -13,13 +13,16 @@ add_executable(fractal-julia
         main.cpp
         fractal_serial.cpp
         fractal_simd.cpp
-        palette.cpp)
+        palette.cpp
+        fractal_openmp.cpp)
 
 target_link_libraries(fractal-julia PRIVATE 
   fmt::fmt 
   SFML::System 
   SFML::Graphics 
   SFML::Window)
+
+target_compile_options(fractal-julia PRIVATE -mavx)
 
 if(EXISTS "${CMAKE_SOURCE_DIR}/arial.ttf")
         add_custom_command(TARGET fractal-julia POST_BUILD
@@ -50,4 +53,3 @@ if(MINGW)
                 COMMENT "Copying MinGW runtime DLLs"
         )
 endif()
-

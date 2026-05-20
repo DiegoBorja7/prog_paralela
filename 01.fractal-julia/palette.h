@@ -8,5 +8,6 @@
 
 extern std::vector<uint32_t> color_ramp;
 extern std::vector<uint32_t> color_ramp2;
+extern std::vector<uint32_t> color_ramp3;
 
 #endif

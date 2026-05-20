@@ -3,8 +3,9 @@
 
 #include "fractal_serial.h"
 #include "fractal_simd.h"
-
+#include "fractal_openmp.h"
 #include <complex>
+#include <omp.h>
 
 #define WIDTH 1600
 #define HEIGHT 900
@@ -26,7 +27,10 @@ enum class runtime_type
 {
     SERIAL_1 = 0,
     SERIAL_2,
-    SIMD
+    SIMD,
+    OPENMP,
+    OPENMP_FOR,
+    OPENMP_FOR_SIMD
 };
 
 #ifdef _WIN32
@@ -57,7 +61,7 @@ int main()
     text.setStyle(sf::Text::Bold);
 
     // opciones
-    std::string options = "Options: [1] Serial 1 [2] Serial 2 [3] SIMD 3 |  Up/Down: Change iterations";
+    std::string options = "Options: [1] Serial 1 [2] Serial 2 [3] SIMD 3 [4] OpenMP [5] OpenMP_FOR [6] OpenMP_FOR_SIMD |  Up/Down: Change iterations";
     sf::Text textOptions(font, options, 24);
     textOptions.setFillColor(sf::Color::White);
     textOptions.setStyle(sf::Text::Bold);
@@ -99,8 +103,21 @@ int main()
                 case sf::Keyboard::Scan::Num3:
                     r_type = runtime_type::SIMD;
                     break;
+                case sf::Keyboard::Scan::Num4:
+                    r_type = runtime_type::OPENMP;
+                    break;
+                case sf::Keyboard::Scan::Num5:
+                    r_type = runtime_type::OPENMP_FOR;
+                    break;
+                case sf::Keyboard::Scan::Num6:
+                    r_type = runtime_type::OPENMP_FOR_SIMD;
+                    break;
+                default:
+                    break;
                 }
             }
+
+            std::memset(pixel_buffer, 0, WIDTH * HEIGHT * sizeof(uint32_t)); // Limpiar el buffer de píxeles antes de cada renderizado  
         }
 
         // crear la textura a partir del buffer de píxeles
@@ -120,7 +137,21 @@ int main()
             julia_simd(x_min, y_min, x_max, y_max, WIDTH, HEIGHT, pixel_buffer);
             mode = "SIMD";
         }
-
+        else if (r_type == runtime_type::OPENMP)
+        {
+            julia_openmp_regiones(x_min, y_min, x_max, y_max, WIDTH, HEIGHT, pixel_buffer);
+            mode = "OPENMP | Threads: " + std::to_string(omp_get_max_threads());
+        }
+        else if (r_type == runtime_type::OPENMP_FOR)
+        {
+            julia_openmp_for(x_min, y_min, x_max, y_max, WIDTH, HEIGHT, pixel_buffer);
+            mode = "OPENMP_FOR | Threads: " + std::to_string(omp_get_max_threads());
+        }
+        else if (r_type == runtime_type::OPENMP_FOR_SIMD)
+        {
+            julia_openmp_for_simd(x_min, y_min, x_max, y_max, WIDTH, HEIGHT, pixel_buffer);
+            mode = "OPENMP_FOR_SIMD | Threads: " + std::to_string(omp_get_max_threads());
+        }
         texture.update((const uint8_t *)pixel_buffer);
 
         // contar FPS
