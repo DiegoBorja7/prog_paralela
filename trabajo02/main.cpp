@@ -38,6 +38,8 @@ void gray_to_rgba(const std::vector<uint8_t>& gray_pixels, std::vector<uint8_t>&
 void print_instructions()
 {
     fmt::print("===========================================\n");
+    fmt::print(" Autor:\tBorja Diego\n");
+    fmt::print("===========================================\n");
     fmt::print(" Trabajo 02 - RGBA a Escala de Grises\n");
     fmt::print("===========================================\n");
     fmt::print("Tecla 1: Mostrar imagen original\n");
@@ -75,7 +77,7 @@ int main()
     bool openmp_ready = false;
 
     ViewMode mode = ViewMode::Original;
-    std::string title = "Trabajo02 - 1 Original | 2 SIMD | 3 OpenMP | S Guardar";
+    std::string title = "Trabajo 02 - [1] Original | [2] SIMD | [3] OpenMP | [S] Guardar";
 
     sf::RenderWindow window(sf::VideoMode({static_cast<unsigned>(width), static_cast<unsigned>(height)}), title);
     sf::Texture texture({static_cast<unsigned>(width), static_cast<unsigned>(height)});
