@@ -3,8 +3,10 @@ cmake_minimum_required(VERSION 3.16)
 project(Cuda01)
 
 find_package(fmt CONFIG REQUIRED)
+
 # Configuracion CUDA
 enable_language(CXX CUDA)
+set(CMAKE_CUDA_ARCHITECTURES "61")
 
 include_directories(
         ${MPI_INCLUDE_DIR}
