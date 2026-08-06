@@ -45,6 +45,7 @@ __global__ void julia_kernel(double centro_real, double centro_img, int num_inte
     double dx = (x_max - x_min) / width;
     double dy = (y_max - y_min) / height;
 
+    // Cada hilo calcula un pixel
     int index = blockIdx.x * blockDim.x + threadIdx.x;
     if (index < width * height)
     {
